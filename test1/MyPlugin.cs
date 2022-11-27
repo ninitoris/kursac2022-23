@@ -30,7 +30,7 @@
 		[CommandMethod("cmd_loft", CommandFlags.NoCheck | CommandFlags.NoPrefix)]
 		public static void Sample3dLoft()
 		{
-			MessageBox.Show("паехали наху   й");
+			MessageBox.Show("паехали нахуй");
 
 			var activeSheet = McDocumentsManager.GetActiveSheet();
 			// var doc = McDocumentsManager.GetActiveDoc();
