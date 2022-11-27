@@ -1,0 +1,12 @@
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\bin\Release\test1.dll
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\bin\Release\test1.pdb
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\UserControl1.g.cs
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1_MarkupCompile.cache
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1_MarkupCompile.lref
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\UserControl1.baml
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1.g.resources
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1.PluginForm.resources
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1.csproj.GenerateResource.cache
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1.csproj.CoreCompileInputs.cache
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1.dll
+C:\Users\Pivo\source\repos\Kursa4\test1\test1\obj\Release\test1.pdb
