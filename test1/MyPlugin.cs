@@ -30,8 +30,6 @@
 		[CommandMethod("cmd_loft", CommandFlags.NoCheck | CommandFlags.NoPrefix)]
 		public static void Sample3dLoft()
 		{
-			MessageBox.Show("паехали нахуй");
-
 			var activeSheet = McDocumentsManager.GetActiveSheet();
 			// var doc = McDocumentsManager.GetActiveDoc();
 
@@ -41,7 +39,7 @@
 			solid.DbEntity.AddToCurrentDocument();
 
 			// Create base profile for the sketch
-			PlanarSketch sketch = solid.AddPlanarSketch();
+			PlanarSketch planarSketch1 = solid.AddPlanarSketch();
 			Polyline3d polyline3d = new Polyline3d(new List<Point3d>() {
 				new Point3d(0, 50, 0),
 				new Point3d(60, 50, 0),
@@ -74,24 +72,69 @@
 			};
 
 			polyline.DbEntity.AddToCurrentDocument();
-			sketch.AddObject(polyline.ID);
-			SketchProfile sketchProfile = sketch.CreateProfile();
-			if (sketchProfile == null)
+			planarSketch1.AddObject(polyline.ID);
+			SketchProfile sketchProfile1 = planarSketch1.CreateProfile();
+			if (sketchProfile1 == null)
 			{
 				MessageBox.Show("ПАешь гавна ");
 				return;
 			}
-			sketchProfile.AutoProcessExternalContours();
+			sketchProfile1.AutoProcessExternalContours();
 			DbLine axis = new DbLine() { 
 				Line = new LineSeg3d(new Point3d(0, 0, 0), new Point3d(1, 0, 0)) 
 			};
 			axis.DbEntity.AddToCurrentDocument();
 			McGeomParam axisGP = new McGeomParam() { ID = axis.ID };
-			RevolveFeature revolveFeature = solid.AddRevolveFeature(sketchProfile.ID, axisGP, Math.PI);
+			RevolveFeature revolveFeature = solid.AddRevolveFeature(sketchProfile1.ID, axisGP, Math.PI * 2);
 			if(revolveFeature == null)
 			{
-				MessageBox.Show("Саси, не получилось");
+				MessageBox.Show("revolveFeature is null");
 			}
+
+			McObjectManager.UpdateAll();
+
+			// новый эскиз для обрезания гайки
+			PlanarSketch planarSketch2 = solid.AddPlanarSketch();
+
+			DbPolyline hexagon = new DbPolyline()
+			{
+				Polyline = new Polyline3d(new List<Point3d>() {
+					new Point3d(100, 55, 0),
+					new Point3d(-100, 55, 0),
+					new Point3d(-100, -55, 0),
+					new Point3d(100, -55, 0),
+					new Point3d(100, 55, 0)
+				})
+			};
+
+			hexagon.DbEntity.AddToCurrentDocument();
+			planarSketch2.AddObject(hexagon.ID);
+
+			// новая YZ плоскость для эскиза
+			Plane3d plane3D = new Plane3d(new Point3d(0, 0, 0), new Vector3d(0, 1, 0), new Vector3d(0, 0, 1));
+			// задаем плоскость для эскиза, теперь он в плоскости YZ
+			planarSketch2.SetPlane(plane3D);
+			
+			SketchProfile sketchProfile2 = planarSketch2.CreateProfile();
+			if(sketchProfile2 == null)
+            {
+				MessageBox.Show("sketchProfile2 == null");
+				return;
+            }
+			sketchProfile2.AutoProcessExternalContours();
+
+			ExtrudeFeature EF2 = solid.AddExtrudeFeature(
+				sketchProfile2.ID,
+				1000,
+				0,
+				FeatureExtentDirection.Positive);
+			EF2.Operation = PartFeatureOperation.Intersect;
+
+			// скрыть эскизы
+			sketchProfile1.DbEntity.Visibility = 0;
+			planarSketch1.DbEntity.Visibility = 0;
+			planarSketch2.DbEntity.Visibility = 0;
+			sketchProfile2.DbEntity.Visibility = 0;
 
 			McObjectManager.UpdateAll();
 
