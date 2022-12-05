@@ -45,13 +45,13 @@
 				new Point3d(60, 50, 0),
 				// фаска
 				new Point3d(64, 45, 0),
+				new Point3d(70, 45, 0),
 
 				// шестерня
-				new Point3d(70, 45, 0),
-				new Point3d(70, 60, 0),
-				new Point3d(72, 65, 0),
-				new Point3d(83, 65, 0),
-				new Point3d(85, 60, 0),
+				new Point3d(70, 70, 0),
+				new Point3d(72, 75, 0),
+				new Point3d(83, 75, 0),
+				new Point3d(85, 70, 0),
 
 				
 				new Point3d(85, 45, 0),
@@ -96,14 +96,18 @@
 			// новый эскиз для обрезания гайки
 			PlanarSketch planarSketch2 = solid.AddPlanarSketch();
 
+			var D = 150;
+
 			DbPolyline hexagon = new DbPolyline()
 			{
 				Polyline = new Polyline3d(new List<Point3d>() {
-					new Point3d(100, 55, 0),
-					new Point3d(-100, 55, 0),
-					new Point3d(-100, -55, 0),
-					new Point3d(100, -55, 0),
-					new Point3d(100, 55, 0)
+					new Point3d(0, D / 2, 0),
+					new Point3d(D * Math.Sqrt(3) / 4, D / 4, 0),
+					new Point3d(D * Math.Sqrt(3) / 4, - D / 4, 0),
+					new Point3d(0, - D / 2, 0),
+					new Point3d(- D * Math.Sqrt(3) / 4, -D / 4, 0),
+					new Point3d(- D * Math.Sqrt(3) / 4, D / 4, 0),
+					new Point3d(0, D / 2, 0),
 				})
 			};
 
