@@ -25,10 +25,28 @@
 			//doc.SendStringToExecute("cmd_loft", true, true, true);
 			//Editor ed = doc.Editor;
 			//ed.Command("cmd_loft");
-			McContext.ExecuteCommand("cmd_loft");
+			//McContext.ExecuteCommand("cmd_loft");
+			//Sample3dLoft();
 		}
 		[CommandMethod("cmd_loft", CommandFlags.NoCheck | CommandFlags.NoPrefix)]
-		public static void Sample3dLoft()
+		public static void Sample3dLoft(
+            Int32 D_n,
+            Int32 d,
+            Int32 d1,
+            Int32 d2,
+            float d3,
+            Int32 D_thread,
+            float DD1,
+            float DD2,
+            Int32 S,
+            Int32 L,
+            Int32 l1_nom,
+            float l1_otkl,
+            float l2,
+            float l3,
+            float LL,
+            Int32 h,
+            float MASS)
 		{
 			var activeSheet = McDocumentsManager.GetActiveSheet();
 			// var doc = McDocumentsManager.GetActiveDoc();
@@ -41,31 +59,31 @@
 			// Create base profile for the sketch
 			PlanarSketch planarSketch1 = solid.AddPlanarSketch();
 			Polyline3d polyline3d = new Polyline3d(new List<Point3d>() {
-				new Point3d(0, 50, 0),
-				new Point3d(60, 50, 0),
+				new Point3d(0, D_thread / 2, 0),
+				new Point3d(L - 2, D_thread / 2, 0),
 				// фаска
-				new Point3d(64, 45, 0),
-				new Point3d(70, 45, 0),
+				new Point3d(L - 1, d1 / 2, 0),
+				new Point3d(L, d1 / 2, 0),
 
 				// шестерня
-				new Point3d(70, 70, 0),
-				new Point3d(72, 75, 0),
-				new Point3d(83, 75, 0),
-				new Point3d(85, 70, 0),
+				new Point3d(L, DD1 / 2 - 1, 0),
+				new Point3d(L + 1, DD1 / 2, 0),
+				new Point3d(L + h - 1, DD1 / 2, 0),
+				new Point3d(L + h, DD1 / 2 - 1, 0),
 
 				
-				new Point3d(85, 45, 0),
-				new Point3d(85, 40, 0), // тут сопряжение
-				new Point3d(90, 40, 0),
+				new Point3d(L + h, DD2 / 2 + 1, 0),
+				new Point3d(L + h, DD2 / 2, 0),		// тут сопряжение
+				new Point3d(L + h + 1, DD2 / 2, 0),
 
-				new Point3d(120, 40, 0),
-				new Point3d(120, 27, 0),
-				new Point3d(30, 27, 0),
-				new Point3d(0, 43, 0),
-				new Point3d(0, 50, 0)
+				new Point3d(LL, DD2 / 2, 0),
+				new Point3d(LL, d2 / 2, 0),
+				new Point3d(0, d2 / 2, 0),
+				new Point3d(0, d1 / 2, 0),
+				new Point3d(0, D_thread / 2, 0)
 			});
 
-			polyline3d.Vertices.MakeFilletAtVertex(9, 5);
+			polyline3d.Vertices.MakeFilletAtVertex(9, 1);
 
 			DbPolyline polyline = new DbPolyline() {
 				Polyline = polyline3d
@@ -76,7 +94,7 @@
 			SketchProfile sketchProfile1 = planarSketch1.CreateProfile();
 			if (sketchProfile1 == null)
 			{
-				MessageBox.Show("ПАешь гавна ");
+				MessageBox.Show("sketchProfile1 == null");
 				return;
 			}
 			sketchProfile1.AutoProcessExternalContours();
@@ -96,18 +114,16 @@
 			// новый эскиз для обрезания гайки
 			PlanarSketch planarSketch2 = solid.AddPlanarSketch();
 
-			var D = 150;
-
 			DbPolyline hexagon = new DbPolyline()
 			{
 				Polyline = new Polyline3d(new List<Point3d>() {
-					new Point3d(0, D / 2, 0),
-					new Point3d(D * Math.Sqrt(3) / 4, D / 4, 0),
-					new Point3d(D * Math.Sqrt(3) / 4, - D / 4, 0),
-					new Point3d(0, - D / 2, 0),
-					new Point3d(- D * Math.Sqrt(3) / 4, -D / 4, 0),
-					new Point3d(- D * Math.Sqrt(3) / 4, D / 4, 0),
-					new Point3d(0, D / 2, 0),
+					new Point3d(0, DD1 / 2, 0),
+					new Point3d(DD1 * Math.Sqrt(3) / 4, DD1 / 4, 0),
+					new Point3d(DD1 * Math.Sqrt(3) / 4, - DD1 / 4, 0),
+					new Point3d(0, - DD1 / 2, 0),
+					new Point3d(- DD1 * Math.Sqrt(3) / 4, - DD1 / 4, 0),
+					new Point3d(- DD1 * Math.Sqrt(3) / 4, DD1 / 4, 0),
+					new Point3d(0, DD1 / 2, 0),
 				})
 			};
 
@@ -189,7 +205,7 @@
 			solid = null;
 			// RevolveFeature revolveFeature = solid.AddRevolveFeature(profile.ID, )
 			*/
-			MessageBox.Show("На ешь блять ");
+			MessageBox.Show("Построение выполнено");
 		}
 
 		[CommandMethod("asdf_command", CommandFlags.NoCheck | CommandFlags.NoPrefix)]

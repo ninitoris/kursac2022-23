@@ -27,7 +27,7 @@ namespace test1
         private void cmd1_Click(object sender, EventArgs e)
         {
             // DataEvent.paramRadius = Convert.ToInt32(param1.Text);
-            MyPlugin.cmd_Loft();
+            LoadData();
         }
 
         private void PluginForm_Load(object sender, EventArgs e)
@@ -48,11 +48,32 @@ namespace test1
 
                 using (SqlDataReader reader = sqlCommand.ExecuteReader())
                 {
-                    if (reader.HasRows)
+                    if (!reader.HasRows)
                     {
-                        reader.Read();
-                        MessageBox.Show(reader["id"].ToString());
+                        MessageBox.Show("Ошибка бд");
+                        return;
                     }
+                    reader.Read();
+                    //MessageBox.Show(reader["id"].ToString());
+                    MyPlugin.Sample3dLoft(
+                        (Int32)reader["D_n"],
+                        (Int32)reader["d"],
+                        (Int32)reader["d1"],
+                        (Int32)reader["d2"],
+                        (float)reader["d3"],
+                        (Int32)reader["D_thread"],
+                        (float)reader["DD1"],
+                        (float)reader["DD2"],
+                        (Int32)reader["S"],
+                        (Int32)reader["L"],
+                        (Int32)reader["l1_nom"],
+                        (float)reader["l1_otkl"],
+                        (float)reader["l2"],
+                        (float)reader["l3"],
+                        (float)reader["LL"],
+                        (Int32)reader["h"],
+                        (float)reader["MASS"]
+                    );
                 }
             }
             catch (Exception ex)
