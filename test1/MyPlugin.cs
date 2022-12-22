@@ -9,6 +9,7 @@
 	using System.Collections.Generic;
 	using System.Windows.Forms;
 	using System;
+	using System.Windows.Shapes;
 
 	public class MyPlugin
 	{
@@ -19,75 +20,44 @@
 			frm.Show();
 		}
 
-		public static void cmd_Loft()
-		{
-			//Document doc = Application.DocumentManager.MdiActiveDocument;
-			//doc.SendStringToExecute("cmd_loft", true, true, true);
-			//Editor ed = doc.Editor;
-			//ed.Command("cmd_loft");
-			//McContext.ExecuteCommand("cmd_loft");
-			//Sample3dLoft();
-		}
-		[CommandMethod("cmd_loft", CommandFlags.NoCheck | CommandFlags.NoPrefix)]
-		public static void Sample3dLoft(
-            Int32 D_n,
-            Int32 d,
-            Int32 d1,
-            Int32 d2,
+		public static void ExecuteBuilder(
+            float D_n,
+            float d,
+            float d1,
+            float d2,
             float d3,
-            Int32 D_thread,
+            float D_thread,
             float DD1,
-            float DD2,
-            Int32 S,
-            Int32 L,
-            Int32 l1_nom,
+            float DD3,
+            float S,
+            float L,
+            float l1_nom,
             float l1_otkl,
             float l2,
             float l3,
             float LL,
-            Int32 h,
-            float MASS)
+            float h,
+            float MASS,
+			string gost)
 		{
-			var activeSheet = McDocumentsManager.GetActiveSheet();
-			// var doc = McDocumentsManager.GetActiveDoc();
+			McDocument.GetDocument(McDocumentsManager.GetActiveDoc().ID).Close();
+			McDocument.CreateDocument();
+            var doc = McDocumentsManager.GetActiveDoc();
 
-			// Create empty solid and add it to the document
-			Mc3dSolid solid = new Mc3dSolid();
-			McObjectManager.Add2Document(solid.DbEntity, activeSheet);
+            // var newSheet = McDocumentsManager.
+            // var doc = McDocumentsManager.GetActiveDoc();
+
+            // Create empty solid and add it to the document
+            Mc3dSolid solid = new Mc3dSolid();
+			McObjectManager.Add2Document(solid.DbEntity, doc);
 			solid.DbEntity.AddToCurrentDocument();
 
 			// Create base profile for the sketch
 			PlanarSketch planarSketch1 = solid.AddPlanarSketch();
-			Polyline3d polyline3d = new Polyline3d(new List<Point3d>() {
-				new Point3d(0, D_thread / 2, 0),
-				new Point3d(L - 2, D_thread / 2, 0),
-				// фаска
-				new Point3d(L - 1, d1 / 2, 0),
-				new Point3d(L, d1 / 2, 0),
 
-				// шестерня
-				new Point3d(L, DD1 / 2 - 1, 0),
-				new Point3d(L + 1, DD1 / 2, 0),
-				new Point3d(L + h - 1, DD1 / 2, 0),
-				new Point3d(L + h, DD1 / 2 - 1, 0),
-
-				
-				new Point3d(L + h, DD2 / 2 + 1, 0),
-				new Point3d(L + h, DD2 / 2, 0),		// тут сопряжение
-				new Point3d(L + h + 1, DD2 / 2, 0),
-
-				new Point3d(LL, DD2 / 2, 0),
-				new Point3d(LL, d2 / 2, 0),
-				new Point3d(0, d2 / 2, 0),
-				new Point3d(0, d1 / 2, 0),
-				new Point3d(0, D_thread / 2, 0)
-			});
-
-			polyline3d.Vertices.MakeFilletAtVertex(9, 1);
-
-			DbPolyline polyline = new DbPolyline() {
-				Polyline = polyline3d
-			};
+            DbPolyline polyline = new DbPolyline() {
+				Polyline = CreatePolyline(D_n, d, d1, d2, d3, D_thread, DD1, DD3, S, L, l1_nom, l1_otkl, l2, l3, LL, h, MASS, gost)
+            };
 
 			polyline.DbEntity.AddToCurrentDocument();
 			planarSketch1.AddObject(polyline.ID);
@@ -157,54 +127,6 @@
 			sketchProfile2.DbEntity.Visibility = 0;
 
 			McObjectManager.UpdateAll();
-
-
-			/*
-			DbCircle circle = new DbCircle()
-			{
-				Center = Point3d.Origin,
-				Radius = DataEvent.paramRadius
-			};
-			circle.DbEntity.AddToCurrentDocument();
-			sketch.AddObject(circle.ID);
-			SketchProfile profile = sketch.CreateProfile();
-			if (profile == null)
-			{
-				MessageBox.Show("Gfitk yf[eq t,kfy t,fysq z ndj. vfnm t,fk ehjl ueq!!!");
-				return;
-			}
-			
-			profile.AutoProcessExternalContours();
-			// Создаем дополнительное сечение.
-			// Add additional section
-			DbCircle section = new DbCircle()
-			{
-				Center = new Point3d(10, 20, 130),
-				Radius = 300
-			};
-			section.DbEntity.AddToCurrentDocument();
-			McGeomParam sectionGP = new McGeomParam() { ID = section.ID };
-			// Создаем вытягивание по умолчанию.
-			// Create default loft 
-			LoftFeature loft = solid.AddLoftFeature(profile.ID, new McGeomParam[] { sectionGP });
-			// Использовать центровые линии.
-			// Use of center lines
-			DbCircArc dbArc = new DbCircArc()
-			{
-				Arc = new CircArc3d(
-					  new Point3d(30, 0, 0),
-					  new Point3d(70, 0, 80),
-					  new Point3d(20, 20, 130)
-				)
-			};
-			dbArc.DbEntity.AddToCurrentDocument();
-			McGeomParam gpArc = new McGeomParam() { ID = dbArc.ID };
-			loft.LoftType = LoftType.WithCenterLine;
-			loft.Path = gpArc;
-
-			solid = null;
-			// RevolveFeature revolveFeature = solid.AddRevolveFeature(profile.ID, )
-			*/
 			MessageBox.Show("Построение выполнено");
 		}
 
@@ -213,5 +135,100 @@
 		{
 			McContext.ExecuteCommand("cmd_loft");
 		}
-	}
+
+		private static Polyline3d CreatePolyline(
+            float D_n,
+            float d,
+            float d1, 
+			float d2,
+            float d3,
+            float D_thread, 
+			float DD1, 
+			float DD3, 
+			float S, 
+			float L, 
+			float l1_nom, 
+			float l1_otkl, 
+			float l2, 
+			float l3, 
+			float LL, 
+			float h,
+            float MASS,
+			string gost)
+        {
+			if (gost == "44")
+			{
+                // построение по ГОСТ 16044
+                Polyline3d polyline3d = new Polyline3d(new List<Point3d>() {
+						new Point3d(1, D_thread / 2, 0),
+						new Point3d(L - 2, D_thread / 2, 0),
+						// фаска
+						new Point3d(L - 1, d1 / 2, 0),
+						new Point3d(L, d1 / 2, 0),
+
+						// гайка
+						new Point3d(L, DD1 * Math.Sqrt(3) / 4, 0),
+						new Point3d(L + (Math.Tan(10 * Math.PI / 180) * (DD1 / 2 - DD1 * Math.Sqrt(3) / 4)), DD1 / 2, 0),
+						new Point3d(L + h - (Math.Tan(10 * Math.PI / 180) * (DD1 / 2 - DD1 * Math.Sqrt(3) / 4)), DD1 / 2, 0),
+						new Point3d(L + h, DD1 * Math.Sqrt(3) / 4, 0),
+
+
+						new Point3d(L + h, DD3 / 2 + 1, 0),
+						new Point3d(L + h, DD3 / 2, 0),		// тут сопряжение
+						new Point3d(L + h + 1, DD3 / 2, 0),
+
+						new Point3d(LL, DD3 / 2, 0),
+						new Point3d(LL, d2 / 2 + 0.5, 0),
+						new Point3d(LL - 0.5, d2 / 2, 0),
+						new Point3d(LL - l1_nom + 1, d2 / 2, 0),
+						new Point3d(LL - l1_nom, d2 / 2, 0), // тут еще сопряжение
+						new Point3d(LL - l1_nom, d / 2, 0),
+
+						new Point3d((d1 / 2 - d / 2 ) * 3 / Math.Sqrt(3), d / 2, 0),
+						new Point3d(0, d1 / 2, 0),
+						new Point3d(0, D_thread / 2 - 1, 0),
+                        new Point3d(1, D_thread / 2, 0)
+                 });
+
+				polyline3d.Vertices.MakeFilletAtVertex(9, 1);
+				polyline3d.Vertices.MakeFilletAtVertex(16, 1);
+
+				return polyline3d;
+            } else
+			{
+                // построение по ГОСТ 16045
+                Polyline3d polyline3d = new Polyline3d(new List<Point3d>() {
+                        new Point3d(1, D_thread / 2, 0),
+                        new Point3d(L - 2, D_thread / 2, 0),
+						// фаска
+						new Point3d(L - 1, d1 / 2, 0),
+                        new Point3d(L, d1 / 2, 0),
+
+						// гайка
+						new Point3d(L, DD1 * Math.Sqrt(3) / 4, 0),
+                        new Point3d(L + (Math.Tan(10 * Math.PI / 180) * (DD1 / 2 - DD1 * Math.Sqrt(3) / 4)), DD1 / 2, 0),
+                        new Point3d(L + h - (Math.Tan(10 * Math.PI / 180) * (DD1 / 2 - DD1 * Math.Sqrt(3) / 4)), DD1 / 2, 0),
+                        new Point3d(L + h, DD1 * Math.Sqrt(3) / 4, 0),
+
+
+                        new Point3d(L + h, DD3 / 2 + 1, 0),
+                        new Point3d(L + h, DD3 / 2, 0),			// тут сопряжение
+						new Point3d(L + h + 1, DD3 / 2, 0),
+
+                        new Point3d(LL, DD3 / 2, 0),
+                        new Point3d(LL, d / 2, 0),
+
+                        new Point3d((d1 / 2 - d / 2 ) * 3 / Math.Sqrt(3), d / 2, 0),
+                        new Point3d(0, d1 / 2, 0),
+                        new Point3d(0, D_thread / 2 - 1, 0),
+                        new Point3d(1, D_thread / 2, 0)
+                 });
+
+                polyline3d.Vertices.MakeFilletAtVertex(9, 1);
+
+                return polyline3d;
+            }
+
+        }
+    }
 }

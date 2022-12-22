@@ -34,3 +34,4 @@ C:\Users\Stewie\source\repos\kursac2022-23\test1\obj\Debug\test1.dll
 C:\Users\Stewie\source\repos\kursac2022-23\test1\obj\Debug\test1.pdb
 C:\Users\Stewie\source\repos\kursac2022-23\test1\bin\Debug\Database1.mdf
 C:\Users\Stewie\source\repos\kursac2022-23\test1\bin\Debug\Database1_log.ldf
+C:\Users\Stewie\source\repos\kursac2022-23\test1\obj\Debug\test1.Properties.Resources.resources
