@@ -120,8 +120,39 @@
 				FeatureExtentDirection.Positive);
 			EF2.Operation = PartFeatureOperation.Intersect;
 
-			// скрыть эскизы
-			sketchProfile1.DbEntity.Visibility = 0;
+			McObjectManager.UpdateAll();
+
+			// дырка
+            PlanarSketch planarSketch3 = solid.AddPlanarSketch();
+
+            CircArc3d circArc3D = new CircArc3d(new Point3d(15.5, 0, DD1 / 2 - 2), Vector3d.YAxis, 1.5 / 5);
+
+			DbGeometry dbGeometry = new DbGeometry();
+			dbGeometry.Geometry = circArc3D;
+            dbGeometry.DbEntity.AddToCurrentDocument();
+            dbGeometry.DbEntity.Update();
+			planarSketch3.AddObject(dbGeometry.ID);
+
+
+			// wip
+			SketchProfile sketchProfile3 = planarSketch3.CreateProfile();
+            if (sketchProfile3 == null)
+            {
+                MessageBox.Show("sketchProfile3 == null");
+                return;
+            }
+
+			ExtrudeFeature EF3 = solid.AddExtrudeFeature(
+				planarSketch3.ID,
+				100,
+				0,
+				FeatureExtentDirection.Symmetric
+				);
+			EF3.Operation = PartFeatureOperation.Cut;
+
+
+            // скрыть эскизы
+            sketchProfile1.DbEntity.Visibility = 0;
 			planarSketch1.DbEntity.Visibility = 0;
 			planarSketch2.DbEntity.Visibility = 0;
 			sketchProfile2.DbEntity.Visibility = 0;
